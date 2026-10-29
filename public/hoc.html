@@ -83,6 +83,11 @@ button:focus-visible,.reg:focus-visible,.g:focus-visible{outline:3px solid var(-
 .bd .big{filter:grayscale(1);opacity:.5}.bd.on .big{filter:none;opacity:1}
 footer{padding:30px 0 40px;color:var(--mu);text-align:center;font-size:.9rem}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+dialog{border:1px solid var(--ln);border-radius:14px;background:var(--sf);color:var(--tx);padding:20px;max-width:360px;width:92%}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+input{font:inherit;width:100%;padding:10px;margin:6px 0;border:2px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx)}
+#au{display:flex;gap:8px;align-items:center;font-size:.9rem}
+#msg{min-height:24px;color:var(--no);font-size:.9rem}
 </style>
 </head>
 <body>
@@ -90,6 +95,7 @@ footer{padding:30px 0 40px;color:var(--mu);text-align:center;font-size:.9rem}
 <h1 id="logo">Sử Địa - THCS</h1>
 <div class="seg" id="sub" role="group" aria-label="Môn học"></div>
 <div class="seg" id="gr" role="group" aria-label="Lớp"></div>
+<div id="au"></div>
 <div class="prog"><div class="pl" id="pl"></div><div class="bar"><i id="pb"></i></div></div>
 </div></header>
 <main>
@@ -112,9 +118,16 @@ footer{padding:30px 0 40px;color:var(--mu);text-align:center;font-size:.9rem}
 <section class="sec"><h2>Huy hiệu của em</h2><p class="sub">Hoàn thành 100% thanh tiến trình của một lớp để nhận huy hiệu.</p><div class="badges" id="bds"></div></section>
 </main>
 <footer>Sử Địa - THCS – nội dung minh họa theo chương trình THCS, em hãy đối chiếu với sách giáo khoa nhé.</footer>
+<dialog id="dl"><h3 style="margin:0 0 6px">Đăng nhập để lưu tiến trình</h3>
+<p class="pl" style="margin:0 0 8px">Dùng email của em hoặc của phụ huynh. Không cần nhập tên thật.</p>
+<label for="em">Email</label><input id="em" type="email" autocomplete="email">
+<label for="pw">Mật khẩu (từ 6 ký tự)</label><input id="pw" type="password" autocomplete="current-password">
+<div id="msg" role="alert"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn p" id="dl-in">Đăng nhập</button><button class="btn" id="dl-up">Tạo tài khoản</button><button class="btn" id="dl-x">Đóng</button></div></dialog>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const SUB={h:{n:"Lịch sử",hs:"Học lịch sử như đọc một câu chuyện",ht:"Mỗi mốc thời gian là một chương truyện",b:["Nhà sử học nhí","📜"]},g:{n:"Địa lý",hs:"Khám phá Trái Đất và đất nước mình",ht:"Cả thế giới nằm gọn trong lòng bàn tay",b:["Nhà thám hiểm","🧭"]}};
-const D={
+let D={
 h:{
 6:{kn:{k:"Văn Lang",i:"🏺",c:"Nhà nước đầu tiên của người Việt, đứng đầu là vua Hùng, kinh đô ở Phong Châu.",e:"Giỗ Tổ Hùng Vương mỗi năm nhắc ta nhớ cội nguồn. Cư dân sống bằng [[nông nghiệp|Trồng trọt, chủ yếu là lúa nước]]."},
 tl:[["-700","Nhà nước Văn Lang","⛰️","Vua Hùng dựng nước đầu tiên của người Việt."],["40","Khởi nghĩa Hai Bà Trưng","⚔️","Trưng Trắc, Trưng Nhị đánh đuổi quân Hán, giành lại quyền tự chủ."],["938","Chiến thắng Bạch Đằng","🌊","Ngô Quyền đóng cọc nhọn trên sông, đánh tan quân Nam Hán."]],
@@ -153,7 +166,43 @@ try{pr=JSON.parse(localStorage.getItem("sd")||"{}")}catch(e){}
 const key=()=>st.s+st.g;
 const seen=()=>pr[key()]=pr[key()]||[];
 const total=()=>{const d=D[st.s][st.g];return (st.s=="h"?d.tl.length:RG.length)+d.fc.length+d.qz.length};
-function mark(id){const a=seen();if(!a.includes(id)){a.push(id);try{localStorage.setItem("sd",JSON.stringify(pr))}catch(e){}}upd()}
+function save(){try{localStorage.setItem("sd",JSON.stringify(pr))}catch(e){}}
+function mark(id){const a=seen();if(!a.includes(id)){a.push(id);save();if(sb&&user)sb.from("progress").upsert({user_id:user.id,subject:st.s,grade:st.g,item_id:id}).then(()=>{})}upd()}
+/* Đăng nhập và đồng bộ tiến trình với Supabase */
+let sb=null,user=null;
+function authUI(){$("au").innerHTML=user?`<span class="pl" title="${user.email}">${user.email.split("@")[0].slice(0,12)}</span><button class="btn" id="lo">Đăng xuất</button>`:`<button class="btn" id="li">Đăng nhập</button>`}
+async function setUser(u){
+if((u&&user&&u.id==user.id)||(!u&&!user)){authUI();return}
+user=u||null;authUI();
+if(!sb)return;
+if(user){
+const {data}=await sb.from("progress").select("subject,grade,item_id");
+const rows=[];
+(data||[]).forEach(r=>{const k=r.subject+r.grade;pr[k]=pr[k]||[];if(!pr[k].includes(r.item_id))pr[k].push(r.item_id)});
+Object.keys(pr).forEach(k=>pr[k].forEach(id=>{if(!(data||[]).some(r=>r.subject+r.grade==k&&r.item_id==id))rows.push({user_id:user.id,subject:k[0],grade:+k.slice(1),item_id:id})}));
+if(rows.length)await sb.from("progress").upsert(rows);
+save();
+}else{pr={};try{localStorage.removeItem("sd")}catch(e){}}
+render();
+}
+async function initAuth(){
+try{
+const c=await fetch("/api/config").then(r=>r.json());
+if(!window.supabase||!c.url){authUI();return}
+sb=window.supabase.createClient(c.url,c.key);
+const {data}=await sb.auth.getSession();
+await setUser(data.session?data.session.user:null);
+sb.auth.onAuthStateChange((_e,ss)=>{setUser(ss?ss.user:null)});
+}catch(e){authUI()}
+}
+const msg=t=>$("msg").textContent=t;
+document.addEventListener("click",async e=>{const id=e.target.id;
+if(id=="li"){msg("");$("dl").showModal()}
+else if(id=="dl-x")$("dl").close()
+else if(id=="lo"&&sb)await sb.auth.signOut()
+else if(id=="dl-in"&&sb){msg("");const {error}=await sb.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});if(error)msg("Email hoặc mật khẩu chưa đúng.");else $("dl").close()}
+else if(id=="dl-up"&&sb){msg("");const {data,error}=await sb.auth.signUp({email:$("em").value.trim(),password:$("pw").value});if(error)msg("Chưa tạo được tài khoản: "+error.message);else if(!data.session)msg("Đã gửi email xác nhận. Em hãy mở email và bấm vào liên kết nhé.");else $("dl").close()}
+});
 function upd(){const t=total(),n=Math.min(seen().length,t),p=Math.round(n*100/t);$("pb").style.width=p+"%";$("pl").textContent="Lớp "+st.g+" – "+SUB[st.s].n+": "+p+"% ("+n+"/"+t+")";
 $("bds").innerHTML=["h","g"].flatMap(s=>[6,7,8,9].map(g=>{const d=D[s][g],t=(s=="h"?d.tl.length:RG.length)+d.fc.length+d.qz.length,on=(pr[s+g]||[]).length>=t;return `<div class="bd ${on?"on":""}"><div class="big">${SUB[s].b[1]}</div><b>${SUB[s].b[0]}</b><div class="pl">Lớp ${g}</div></div>`})).join("")}
 function gl(t){return t.replace(/\[\[(.+?)\|(.+?)\]\]/g,(m,a,b)=>`<button class="g" data-t="${b}">${a}</button>`)}
@@ -184,7 +233,8 @@ else if(t.dataset.v!==undefined&&!st.a){st.a=true;const c=D[st.s][st.g].qz[st.qi
 else if(t.id=="qnx"){st.qi=(st.qi+1)%D[st.s][st.g].qz.length;qr()}});
 document.addEventListener("mouseover",e=>{const t=e.target.closest(".reg");if(t)reg(+t.dataset.r,true)});
 function reg(i,q){document.querySelectorAll(".reg").forEach((b,j)=>b.classList.toggle("on",j==i));const r=RG[i];$("ri").innerHTML=`<div class="big">${r[1]}</div><h3>${r[0]}</h3><p>${r[2]}</p>`;if(!q)mark("r"+i)}
-render();
+/* Tải nội dung từ Supabase; nếu lỗi thì dùng dữ liệu dự phòng ở trên */
+fetch("/api/content").then(r=>r.ok?r.json():null).then(j=>{if(j&&j.h&&j.g)D=j}).catch(()=>{}).finally(()=>{render();initAuth()});
 </script>
 </body>
 </html>
