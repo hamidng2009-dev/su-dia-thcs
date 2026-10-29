@@ -158,8 +158,8 @@ qz:[["Gió và nước là ngoại lực.",1,"Đúng. Chúng tác động từ b
 9:{kn:{k:"Vùng kinh tế",i:"🗺️",c:"Việt Nam chia thành 7 vùng kinh tế, mỗi vùng có thế mạnh riêng về đất đai, khí hậu và tài nguyên.",e:"Tây Nguyên trồng cà phê, Quảng Ninh khai thác than, Đồng bằng sông Cửu Long trồng lúa. Cả nước cùng [[liên kết vùng|Các vùng hỗ trợ nhau phát triển]]."},
 fc:[["Tây Nguyên nổi tiếng với cây gì?","Cây cà phê"],["Vùng trồng lúa lớn nhất cả nước?","Đồng bằng sông Cửu Long"]],
 qz:[["Quảng Ninh nổi tiếng về khai thác than.",1,"Đúng. Đây là thế mạnh nổi bật."],["Cà phê là cây trồng chính của vùng Đông Bắc.",0,"Sai. Cà phê chủ yếu ở Tây Nguyên."]],tl:[]}}};
-const PF=[["Trần Hưng Đạo","🛡️","Hưng Đạo Vương","“Nếu bệ hạ muốn hàng, xin hãy chém đầu thần trước đã.”","Ba lần đại phá quân Nguyên Mông"],["Hai Bà Trưng","🐘","Nữ anh hùng","Cưỡi voi ra trận","Giành lại độc lập năm 40"],["Ngô Quyền","⚓","Tiền Ngô Vương","Dùng cọc nhọn cắm dưới lòng sông","Chiến thắng Bạch Đằng 938"],["Hồ Chí Minh","🚩","Chủ tịch nước","“Không có gì quý hơn độc lập, tự do.”","Đọc Tuyên ngôn Độc lập 1945"]];
-const RG=[["Trung du và miền núi Bắc Bộ","⛏️","Khoáng sản (than ở Quảng Ninh), thủy điện, ruộng bậc thang."],["Đồng bằng sông Hồng","🌾","Vựa lúa miền Bắc, Hà Nội là trung tâm chính trị."],["Bắc Trung Bộ","🌊","Dải đất hẹp, nhiều thiên tai, có rừng và biển."],["Duyên hải Nam Trung Bộ","🏖️","Nhiều cảng biển, du lịch biển, nghề cá."],["Tây Nguyên","☕","Cà phê, hồ tiêu, cao su trên đất đỏ bazan."],["Đông Nam Bộ","🏭","Vùng kinh tế năng động nhất, TP. Hồ Chí Minh."],["Đồng bằng sông Cửu Long","🍚","Vựa lúa, trái cây và thủy sản của cả nước."]];
+let PF=[["Trần Hưng Đạo","🛡️","Hưng Đạo Vương","“Nếu bệ hạ muốn hàng, xin hãy chém đầu thần trước đã.”","Ba lần đại phá quân Nguyên Mông"],["Hai Bà Trưng","🐘","Nữ anh hùng","Cưỡi voi ra trận","Giành lại độc lập năm 40"],["Ngô Quyền","⚓","Tiền Ngô Vương","Dùng cọc nhọn cắm dưới lòng sông","Chiến thắng Bạch Đằng 938"],["Hồ Chí Minh","🚩","Chủ tịch nước","“Không có gì quý hơn độc lập, tự do.”","Đọc Tuyên ngôn Độc lập 1945"]];
+let RG=[["Trung du và miền núi Bắc Bộ","⛏️","Khoáng sản (than ở Quảng Ninh), thủy điện, ruộng bậc thang."],["Đồng bằng sông Hồng","🌾","Vựa lúa miền Bắc, Hà Nội là trung tâm chính trị."],["Bắc Trung Bộ","🌊","Dải đất hẹp, nhiều thiên tai, có rừng và biển."],["Duyên hải Nam Trung Bộ","🏖️","Nhiều cảng biển, du lịch biển, nghề cá."],["Tây Nguyên","☕","Cà phê, hồ tiêu, cao su trên đất đỏ bazan."],["Đông Nam Bộ","🏭","Vùng kinh tế năng động nhất, TP. Hồ Chí Minh."],["Đồng bằng sông Cửu Long","🍚","Vựa lúa, trái cây và thủy sản của cả nước."]];
 const $=id=>document.getElementById(id);
 let st={s:"h",g:6,fi:0,qi:0,a:false},pr={};
 try{pr=JSON.parse(localStorage.getItem("sd")||"{}")}catch(e){}
@@ -213,7 +213,7 @@ $("gr").innerHTML=[6,7,8,9].map(g=>`<button data-g="${g}" aria-pressed="${g==st.
 $("ht").textContent=SUB[st.s].ht;$("hs").textContent=SUB[st.s].hs+" – lớp "+st.g;
 ["s-h1","s-h2"].forEach(i=>$(i).hidden=!h);["s-g1","s-g2"].forEach(i=>$(i).hidden=h);
 $("tip").style.display="none";
-const k=d.kn;$("kn").innerHTML=`<div class="card"><div class="big">${k.i}</div><h3>Từ khóa</h3><span class="kw">${k.k}</span></div><div class="card"><h3>Hình ảnh và nội dung</h3><p>${k.c}</p></div><div class="card"><h3>Ví dụ thực tế</h3><p>${gl(k.e)}</p></div>`;
+$("kn").innerHTML=(Array.isArray(d.kn)?d.kn:[d.kn]).map(k=>`<div class="card"><div class="big">${k.i}</div><h3>Từ khóa</h3><span class="kw">${k.k}</span></div><div class="card"><h3>Hình ảnh và nội dung</h3><p>${k.c}</p></div><div class="card"><h3>Ví dụ thực tế</h3><p>${gl(k.e)}</p></div>`).join("");
 if(h){const n=d.tl.length;$("rail").innerHTML=d.tl.map((e,i)=>`<button class="dot ${seen().includes("t"+i)?"seen":""}" style="left:${10+i*80/(n-1)}%" data-i="${i}" aria-label="Năm ${e[0]}" aria-pressed="false"></button>`).join("");tl(0,true);
 $("pf").innerHTML=PF.map(p=>`<div class="card"><div class="big">${p[1]}</div><h3>${p[0]}</h3><p class="pl">${p[2]}</p><p><b>Câu nói và nét nổi bật:</b> ${p[3]}</p><p><span class="kw">${p[4]}</span></p></div>`).join("")}
 else{$("regs").innerHTML=RG.map((r,i)=>`<button class="reg" data-r="${i}">${r[1]} ${r[0]}</button>`).join("");$("ri").innerHTML="<p>Chọn một vùng ở bên trái để xem đặc điểm nổi bật.</p>"}
@@ -234,7 +234,7 @@ else if(t.id=="qnx"){st.qi=(st.qi+1)%D[st.s][st.g].qz.length;qr()}});
 document.addEventListener("mouseover",e=>{const t=e.target.closest(".reg");if(t)reg(+t.dataset.r,true)});
 function reg(i,q){document.querySelectorAll(".reg").forEach((b,j)=>b.classList.toggle("on",j==i));const r=RG[i];$("ri").innerHTML=`<div class="big">${r[1]}</div><h3>${r[0]}</h3><p>${r[2]}</p>`;if(!q)mark("r"+i)}
 /* Tải nội dung từ Supabase; nếu lỗi thì dùng dữ liệu dự phòng ở trên */
-fetch("/api/content").then(r=>r.ok?r.json():null).then(j=>{if(j&&j.h&&j.g)D=j}).catch(()=>{}).finally(()=>{render();initAuth()});
+fetch("/api/content").then(r=>r.ok?r.json():null).then(j=>{if(j&&j.h&&j.g){D=j;if(j.pf&&j.pf.length)PF=j.pf;if(j.rg&&j.rg.length)RG=j.rg}}).catch(()=>{}).finally(()=>{render();initAuth()});
 </script>
 </body>
 </html>
