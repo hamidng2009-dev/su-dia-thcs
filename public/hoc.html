@@ -166,7 +166,7 @@ let st={s:"h",g:6,fi:0,qi:0,l:0,a:false},pr={};
 try{pr=JSON.parse(localStorage.getItem("sd")||"{}")}catch(e){}
 const key=()=>st.s+st.g;
 const seen=()=>pr[key()]=pr[key()]||[];
-const tot=(s,g)=>{const a=(LS[s]&&LS[s][g])||[];if(a.length)return a.reduce((n,l)=>n+(s=="h"?l.tl.length:0)+l.fc.length+l.qz.length,s=="h"?0:RG.length);const d=D[s][g];return (s=="h"?d.tl.length:RG.length)+d.fc.length+d.qz.length};
+const tot=(s,g)=>{const a=(LS[s]&&LS[s][g])||[];if(a.length)return a.reduce((n,l)=>n+(s=="h"?l.tl.length:0)+l.fc.length+l.qz.length,s=="h"||g!=9?0:RG.length);const d=D[s][g];return (s=="h"?d.tl.length:g==9?RG.length:0)+d.fc.length+d.qz.length};
 const total=()=>tot(st.s,st.g);
 const pid=x=>x[0]=="r"?x:((LS[st.s]&&LS[st.s][st.g]&&LS[st.s][st.g][st.l])?LS[st.s][st.g][st.l].id+":":"")+x;
 function pickD(){const a=LS[st.s]&&LS[st.s][st.g];if(!a||!a.length)return;if(!a[st.l])st.l=0;const l=a[st.l];D[st.s][st.g]={kn:l.kn,tl:l.tl,fc:l.fc,qz:l.qz}}
@@ -217,15 +217,15 @@ pickD();const d=D[st.s][st.g],h=st.s=="h";document.documentElement.dataset.s=st.
 $("sub").innerHTML=Object.keys(SUB).map(k=>`<button data-s="${k}" aria-pressed="${k==st.s}">${SUB[k].n}</button>`).join("");
 $("gr").innerHTML=[6,7,8,9].map(g=>`<button data-g="${g}" aria-pressed="${g==st.g}">Lớp ${g}</button>`).join("");
 $("ht").textContent=SUB[st.s].ht;$("hs").textContent=SUB[st.s].hs+" – lớp "+st.g;
-["s-h1","s-h2"].forEach(i=>$(i).hidden=!h);["s-g1","s-g2"].forEach(i=>$(i).hidden=h);
+$("s-h1").hidden=!h||!d.tl.length;$("s-h2").hidden=!h;$("s-g1").hidden=h||st.g!=9;$("s-g2").hidden=h||st.g>7;
 {const a=LS[st.s]&&LS[st.s][st.g];let o="",c="";(a||[]).forEach((l,i)=>{if(l.ch!==c){if(c!==""||i)o+="</optgroup>";o+=`<optgroup label="${l.ch||"Khác"}">`;c=l.ch}o+=`<option value="${i}"${i==st.l?" selected":""}>${l.no?"Bài "+l.no+": ":""}${l.t}</option>`});$("pk").innerHTML=a&&a.length?`<label for="ls" class="pl">Chọn bài học</label><select id="ls">${o}</optgroup></select>`:""}
 $("tip").style.display="none";
 $("kn").innerHTML=(Array.isArray(d.kn)?d.kn:[d.kn]).map(k=>`<div class="card"><div class="big">${k.i}</div><h3>Từ khóa</h3><span class="kw">${k.k}</span></div><div class="card"><h3>Hình ảnh và nội dung</h3><p>${k.c}</p></div><div class="card"><h3>Ví dụ thực tế</h3><p>${gl(k.e)}</p></div>`).join("");
-if(h){const n=d.tl.length;$("rail").innerHTML=d.tl.map((e,i)=>`<button class="dot ${seen().includes(pid("t"+i))?"seen":""}" style="left:${10+i*80/(n-1)}%" data-i="${i}" aria-label="Năm ${e[0]}" aria-pressed="false"></button>`).join("");tl(0,true);
+if(h){const n=d.tl.length;$("rail").innerHTML=d.tl.map((e,i)=>`<button class="dot ${seen().includes(pid("t"+i))?"seen":""}" style="left:${n>1?10+i*80/(n-1):50}%" data-i="${i}" aria-label="Năm ${e[0]}" aria-pressed="false"></button>`).join("");tl(0,true);
 $("pf").innerHTML=PF.map(p=>`<div class="card"><div class="big">${p[1]}</div><h3>${p[0]}</h3><p class="pl">${p[2]}</p><p><b>Câu nói và nét nổi bật:</b> ${p[3]}</p><p><span class="kw">${p[4]}</span></p></div>`).join("")}
 else{$("regs").innerHTML=RG.map((r,i)=>`<button class="reg" data-r="${i}">${r[1]} ${r[0]}</button>`).join("");$("ri").innerHTML="<p>Chọn một vùng ở bên trái để xem đặc điểm nổi bật.</p>"}
 st.fi=0;st.qi=0;fcr();qr();upd()}
-function tl(i,quiet){const e=D.h[st.g].tl[i];document.querySelectorAll(".dot").forEach((b,j)=>b.setAttribute("aria-pressed",j==i));$("pop").innerHTML=`<div class="big">${e[2]}</div><div><b>Năm ${e[0].replace("-","")}${e[0][0]=="-"?" TCN":""}: ${e[1]}</b><br>${e[3]}</div>`;if(!quiet)mark("t"+i)}
+function tl(i,quiet){const e=D.h[st.g].tl[i];if(!e){$("pop").innerHTML="";return}document.querySelectorAll(".dot").forEach((b,j)=>b.setAttribute("aria-pressed",j==i));$("pop").innerHTML=`<div class="big">${e[2]}</div><div><b>Năm ${e[0].replace("-","")}${e[0][0]=="-"?" TCN":""}: ${e[1]}</b><br>${e[3]}</div>`;if(!quiet)mark("t"+i)}
 function fcr(){const f=D[st.s][st.g].fc,c=f[st.fi];$("fc").classList.remove("f");$("fq").textContent=c[0];$("fa").textContent=c[1];$("fn").textContent=(st.fi+1)+"/"+f.length}
 function qr(){const q=D[st.s][st.g].qz,c=q[st.qi];st.a=false;$("qn").textContent="Câu "+(st.qi+1)+"/"+q.length;$("qt").textContent=c[0];$("fb").textContent="";$("qnx").hidden=true;document.querySelectorAll(".qa button").forEach(b=>b.className="")}
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
