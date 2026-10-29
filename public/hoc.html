@@ -88,6 +88,7 @@ dialog::backdrop{background:rgba(0,0,0,.5)}
 input{font:inherit;width:100%;padding:10px;margin:6px 0;border:2px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx)}
 #au{display:flex;gap:8px;align-items:center;font-size:.9rem}
 #msg{min-height:24px;color:var(--no);font-size:.9rem}
+select{font:inherit;padding:10px;border:2px solid var(--ln);border-radius:8px;background:var(--sf);color:var(--tx);max-width:100%;margin-left:6px}
 </style>
 </head>
 <body>
@@ -99,7 +100,7 @@ input{font:inherit;width:100%;padding:10px;margin:6px 0;border:2px solid var(--l
 <div class="prog"><div class="pl" id="pl"></div><div class="bar"><i id="pb"></i></div></div>
 </div></header>
 <main>
-<section class="hero"><h2 id="ht"></h2><p class="sub" id="hs"></p></section>
+<section class="hero"><h2 id="ht"></h2><p class="sub" id="hs"></p><div id="pk"></div></section>
 
 <section class="sec"><h2>Thẻ kiến thức 3 phút</h2><p class="sub">1 khái niệm = 1 từ khóa + 1 hình ảnh + 1 ví dụ. Bấm từ gạch chân để xem giải nghĩa.</p><div class="cards" id="kn"></div><div id="tip" role="status"></div></section>
 
@@ -158,16 +159,20 @@ qz:[["Gió và nước là ngoại lực.",1,"Đúng. Chúng tác động từ b
 9:{kn:{k:"Vùng kinh tế",i:"🗺️",c:"Việt Nam chia thành 7 vùng kinh tế, mỗi vùng có thế mạnh riêng về đất đai, khí hậu và tài nguyên.",e:"Tây Nguyên trồng cà phê, Quảng Ninh khai thác than, Đồng bằng sông Cửu Long trồng lúa. Cả nước cùng [[liên kết vùng|Các vùng hỗ trợ nhau phát triển]]."},
 fc:[["Tây Nguyên nổi tiếng với cây gì?","Cây cà phê"],["Vùng trồng lúa lớn nhất cả nước?","Đồng bằng sông Cửu Long"]],
 qz:[["Quảng Ninh nổi tiếng về khai thác than.",1,"Đúng. Đây là thế mạnh nổi bật."],["Cà phê là cây trồng chính của vùng Đông Bắc.",0,"Sai. Cà phê chủ yếu ở Tây Nguyên."]],tl:[]}}};
-let PF=[["Trần Hưng Đạo","🛡️","Hưng Đạo Vương","“Nếu bệ hạ muốn hàng, xin hãy chém đầu thần trước đã.”","Ba lần đại phá quân Nguyên Mông"],["Hai Bà Trưng","🐘","Nữ anh hùng","Cưỡi voi ra trận","Giành lại độc lập năm 40"],["Ngô Quyền","⚓","Tiền Ngô Vương","Dùng cọc nhọn cắm dưới lòng sông","Chiến thắng Bạch Đằng 938"],["Hồ Chí Minh","🚩","Chủ tịch nước","“Không có gì quý hơn độc lập, tự do.”","Đọc Tuyên ngôn Độc lập 1945"]];
+let LS={h:{},g:{}};let PF=[["Trần Hưng Đạo","🛡️","Hưng Đạo Vương","“Nếu bệ hạ muốn hàng, xin hãy chém đầu thần trước đã.”","Ba lần đại phá quân Nguyên Mông"],["Hai Bà Trưng","🐘","Nữ anh hùng","Cưỡi voi ra trận","Giành lại độc lập năm 40"],["Ngô Quyền","⚓","Tiền Ngô Vương","Dùng cọc nhọn cắm dưới lòng sông","Chiến thắng Bạch Đằng 938"],["Hồ Chí Minh","🚩","Chủ tịch nước","“Không có gì quý hơn độc lập, tự do.”","Đọc Tuyên ngôn Độc lập 1945"]];
 let RG=[["Trung du và miền núi Bắc Bộ","⛏️","Khoáng sản (than ở Quảng Ninh), thủy điện, ruộng bậc thang."],["Đồng bằng sông Hồng","🌾","Vựa lúa miền Bắc, Hà Nội là trung tâm chính trị."],["Bắc Trung Bộ","🌊","Dải đất hẹp, nhiều thiên tai, có rừng và biển."],["Duyên hải Nam Trung Bộ","🏖️","Nhiều cảng biển, du lịch biển, nghề cá."],["Tây Nguyên","☕","Cà phê, hồ tiêu, cao su trên đất đỏ bazan."],["Đông Nam Bộ","🏭","Vùng kinh tế năng động nhất, TP. Hồ Chí Minh."],["Đồng bằng sông Cửu Long","🍚","Vựa lúa, trái cây và thủy sản của cả nước."]];
 const $=id=>document.getElementById(id);
-let st={s:"h",g:6,fi:0,qi:0,a:false},pr={};
+let st={s:"h",g:6,fi:0,qi:0,l:0,a:false},pr={};
 try{pr=JSON.parse(localStorage.getItem("sd")||"{}")}catch(e){}
 const key=()=>st.s+st.g;
 const seen=()=>pr[key()]=pr[key()]||[];
-const total=()=>{const d=D[st.s][st.g];return (st.s=="h"?d.tl.length:RG.length)+d.fc.length+d.qz.length};
+const tot=(s,g)=>{const a=(LS[s]&&LS[s][g])||[];if(a.length)return a.reduce((n,l)=>n+(s=="h"?l.tl.length:0)+l.fc.length+l.qz.length,s=="h"?0:RG.length);const d=D[s][g];return (s=="h"?d.tl.length:RG.length)+d.fc.length+d.qz.length};
+const total=()=>tot(st.s,st.g);
+const pid=x=>x[0]=="r"?x:((LS[st.s]&&LS[st.s][st.g]&&LS[st.s][st.g][st.l])?LS[st.s][st.g][st.l].id+":":"")+x;
+function pickD(){const a=LS[st.s]&&LS[st.s][st.g];if(!a||!a.length)return;if(!a[st.l])st.l=0;const l=a[st.l];D[st.s][st.g]={kn:l.kn,tl:l.tl,fc:l.fc,qz:l.qz}}
+function buildLS(L){LS={h:{},g:{}};L.forEach(l=>{const o=LS[l.s];(o[l.g]=o[l.g]||[]).push(l)})}
 function save(){try{localStorage.setItem("sd",JSON.stringify(pr))}catch(e){}}
-function mark(id){const a=seen();if(!a.includes(id)){a.push(id);save();if(sb&&user)sb.from("progress").upsert({user_id:user.id,subject:st.s,grade:st.g,item_id:id}).then(()=>{})}upd()}
+function mark(id){id=pid(id);const a=seen();if(!a.includes(id)){a.push(id);save();if(sb&&user)sb.from("progress").upsert({user_id:user.id,subject:st.s,grade:st.g,item_id:id}).then(()=>{})}upd()}
 /* Đăng nhập và đồng bộ tiến trình với Supabase */
 let sb=null,user=null;
 function authUI(){$("au").innerHTML=user?`<span class="pl" title="${user.email}">${user.email.split("@")[0].slice(0,12)}</span><button class="btn" id="lo">Đăng xuất</button>`:`<button class="btn" id="li">Đăng nhập</button>`}
@@ -196,6 +201,7 @@ sb.auth.onAuthStateChange((_e,ss)=>{setUser(ss?ss.user:null)});
 }catch(e){authUI()}
 }
 const msg=t=>$("msg").textContent=t;
+document.addEventListener("change",e=>{if(e.target.id=="ls"){st.l=+e.target.value;render()}});
 document.addEventListener("click",async e=>{const id=e.target.id;
 if(id=="li"){msg("");$("dl").showModal()}
 else if(id=="dl-x")$("dl").close()
@@ -204,17 +210,18 @@ else if(id=="dl-in"&&sb){msg("");const {error}=await sb.auth.signInWithPassword(
 else if(id=="dl-up"&&sb){msg("");const {data,error}=await sb.auth.signUp({email:$("em").value.trim(),password:$("pw").value});if(error)msg("Chưa tạo được tài khoản: "+error.message);else if(!data.session)msg("Đã gửi email xác nhận. Em hãy mở email và bấm vào liên kết nhé.");else $("dl").close()}
 });
 function upd(){const t=total(),n=Math.min(seen().length,t),p=Math.round(n*100/t);$("pb").style.width=p+"%";$("pl").textContent="Lớp "+st.g+" – "+SUB[st.s].n+": "+p+"% ("+n+"/"+t+")";
-$("bds").innerHTML=["h","g"].flatMap(s=>[6,7,8,9].map(g=>{const d=D[s][g],t=(s=="h"?d.tl.length:RG.length)+d.fc.length+d.qz.length,on=(pr[s+g]||[]).length>=t;return `<div class="bd ${on?"on":""}"><div class="big">${SUB[s].b[1]}</div><b>${SUB[s].b[0]}</b><div class="pl">Lớp ${g}</div></div>`})).join("")}
+$("bds").innerHTML=["h","g"].flatMap(s=>[6,7,8,9].map(g=>{const t=tot(s,g),on=(pr[s+g]||[]).length>=t;return `<div class="bd ${on?"on":""}"><div class="big">${SUB[s].b[1]}</div><b>${SUB[s].b[0]}</b><div class="pl">Lớp ${g}</div></div>`})).join("")}
 function gl(t){return t.replace(/\[\[(.+?)\|(.+?)\]\]/g,(m,a,b)=>`<button class="g" data-t="${b}">${a}</button>`)}
 function render(){
-const d=D[st.s][st.g],h=st.s=="h";document.documentElement.dataset.s=st.s;
+pickD();const d=D[st.s][st.g],h=st.s=="h";document.documentElement.dataset.s=st.s;
 $("sub").innerHTML=Object.keys(SUB).map(k=>`<button data-s="${k}" aria-pressed="${k==st.s}">${SUB[k].n}</button>`).join("");
 $("gr").innerHTML=[6,7,8,9].map(g=>`<button data-g="${g}" aria-pressed="${g==st.g}">Lớp ${g}</button>`).join("");
 $("ht").textContent=SUB[st.s].ht;$("hs").textContent=SUB[st.s].hs+" – lớp "+st.g;
 ["s-h1","s-h2"].forEach(i=>$(i).hidden=!h);["s-g1","s-g2"].forEach(i=>$(i).hidden=h);
+{const a=LS[st.s]&&LS[st.s][st.g];let o="",c="";(a||[]).forEach((l,i)=>{if(l.ch!==c){if(c!==""||i)o+="</optgroup>";o+=`<optgroup label="${l.ch||"Khác"}">`;c=l.ch}o+=`<option value="${i}"${i==st.l?" selected":""}>${l.no?"Bài "+l.no+": ":""}${l.t}</option>`});$("pk").innerHTML=a&&a.length?`<label for="ls" class="pl">Chọn bài học</label><select id="ls">${o}</optgroup></select>`:""}
 $("tip").style.display="none";
 $("kn").innerHTML=(Array.isArray(d.kn)?d.kn:[d.kn]).map(k=>`<div class="card"><div class="big">${k.i}</div><h3>Từ khóa</h3><span class="kw">${k.k}</span></div><div class="card"><h3>Hình ảnh và nội dung</h3><p>${k.c}</p></div><div class="card"><h3>Ví dụ thực tế</h3><p>${gl(k.e)}</p></div>`).join("");
-if(h){const n=d.tl.length;$("rail").innerHTML=d.tl.map((e,i)=>`<button class="dot ${seen().includes("t"+i)?"seen":""}" style="left:${10+i*80/(n-1)}%" data-i="${i}" aria-label="Năm ${e[0]}" aria-pressed="false"></button>`).join("");tl(0,true);
+if(h){const n=d.tl.length;$("rail").innerHTML=d.tl.map((e,i)=>`<button class="dot ${seen().includes(pid("t"+i))?"seen":""}" style="left:${10+i*80/(n-1)}%" data-i="${i}" aria-label="Năm ${e[0]}" aria-pressed="false"></button>`).join("");tl(0,true);
 $("pf").innerHTML=PF.map(p=>`<div class="card"><div class="big">${p[1]}</div><h3>${p[0]}</h3><p class="pl">${p[2]}</p><p><b>Câu nói và nét nổi bật:</b> ${p[3]}</p><p><span class="kw">${p[4]}</span></p></div>`).join("")}
 else{$("regs").innerHTML=RG.map((r,i)=>`<button class="reg" data-r="${i}">${r[1]} ${r[0]}</button>`).join("");$("ri").innerHTML="<p>Chọn một vùng ở bên trái để xem đặc điểm nổi bật.</p>"}
 st.fi=0;st.qi=0;fcr();qr();upd()}
@@ -222,8 +229,8 @@ function tl(i,quiet){const e=D.h[st.g].tl[i];document.querySelectorAll(".dot").f
 function fcr(){const f=D[st.s][st.g].fc,c=f[st.fi];$("fc").classList.remove("f");$("fq").textContent=c[0];$("fa").textContent=c[1];$("fn").textContent=(st.fi+1)+"/"+f.length}
 function qr(){const q=D[st.s][st.g].qz,c=q[st.qi];st.a=false;$("qn").textContent="Câu "+(st.qi+1)+"/"+q.length;$("qt").textContent=c[0];$("fb").textContent="";$("qnx").hidden=true;document.querySelectorAll(".qa button").forEach(b=>b.className="")}
 document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
-if(t.dataset.s){st.s=t.dataset.s;render()}
-else if(t.dataset.g){st.g=+t.dataset.g;render()}
+if(t.dataset.s){st.s=t.dataset.s;st.l=0;render()}
+else if(t.dataset.g){st.g=+t.dataset.g;st.l=0;render()}
 else if(t.dataset.i!==undefined)tl(+t.dataset.i);
 else if(t.dataset.r!==undefined)reg(+t.dataset.r);
 else if(t.classList.contains("g")){$("tip").textContent=t.textContent+": "+t.dataset.t;$("tip").style.display="block"}
@@ -234,7 +241,7 @@ else if(t.id=="qnx"){st.qi=(st.qi+1)%D[st.s][st.g].qz.length;qr()}});
 document.addEventListener("mouseover",e=>{const t=e.target.closest(".reg");if(t)reg(+t.dataset.r,true)});
 function reg(i,q){document.querySelectorAll(".reg").forEach((b,j)=>b.classList.toggle("on",j==i));const r=RG[i];$("ri").innerHTML=`<div class="big">${r[1]}</div><h3>${r[0]}</h3><p>${r[2]}</p>`;if(!q)mark("r"+i)}
 /* Tải nội dung từ Supabase; nếu lỗi thì dùng dữ liệu dự phòng ở trên */
-fetch("/api/content").then(r=>r.ok?r.json():null).then(j=>{if(j&&j.h&&j.g){D=j;if(j.pf&&j.pf.length)PF=j.pf;if(j.rg&&j.rg.length)RG=j.rg}}).catch(()=>{}).finally(()=>{render();initAuth()});
+fetch("/api/content").then(r=>r.ok?r.json():null).then(j=>{if(j&&j.L&&j.L.length){buildLS(j.L);if(j.pf&&j.pf.length)PF=j.pf;if(j.rg&&j.rg.length)RG=j.rg}}).catch(()=>{}).finally(()=>{render();initAuth()});
 </script>
 </body>
 </html>
