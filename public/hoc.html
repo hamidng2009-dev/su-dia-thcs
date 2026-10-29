@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sử Địa - THCS</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f4ef;--sf:#fff;--tx:#1f2328;--mu:#5b616a;--ln:#e2ddd2;--ac:#9c4a2f;--acs:#f3e3d6;--ac2:#c9962b;--ok:#2e7d4f;--no:#b3261e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+:root[data-s=g]{--ac:#17669b;--acs:#dcecf6;--ac2:#2e8b57}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#17181a;--sf:#222427;--tx:#eceae4;--mu:#a4a8ae;--ln:#383b40;--acs:#3a2a22;--ac:#e08a66;--ac2:#d9aa4a}
+:root[data-s=g]:not([data-theme=light]){--acs:#1b3041;--ac:#6bb6e6;--ac2:#5cc08a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.6 "Be Vietnam Pro",Inter,Roboto,Arial,sans-serif}
+main,header .in{max-width:980px;margin:auto;padding:0 16px}
+header{background:var(--sf);border-bottom:1px solid var(--ln);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header .in{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding-top:10px;padding-bottom:10px}
+h1{font-size:1.25rem;margin:0;font-weight:800;color:var(--ac)}
+h2{font-size:1.45rem;margin:0 0 4px;font-weight:800}
+.sec{padding:30px 0 6px}
+.sub{color:var(--mu);margin:0 0 16px;font-size:1rem}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;cursor:pointer;color:inherit}
+.seg button{border:2px solid var(--ln);background:var(--sf);border-radius:10px;padding:6px 14px;font-weight:700;min-height:44px}
+.seg button[aria-pressed=true]{background:var(--ac);border-color:var(--ac);color:#fff}
+button:focus-visible,.reg:focus-visible,.g:focus-visible{outline:3px solid var(--ac2);outline-offset:2px}
+.prog{flex:1;min-width:180px}
+.bar{height:12px;background:var(--ln);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ac2);transition:width .4s}
+.pl{font-size:.85rem;color:var(--mu)}
+.hero{padding:30px 0 6px}
+.hero h2{font-size:clamp(1.7rem,5vw,2.6rem);line-height:1.2;max-width:20ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px}
+.card h3{margin:0 0 6px;font-size:1.1rem}
+.big{font-size:2.2rem;line-height:1}
+.kw{display:inline-block;background:var(--acs);color:var(--ac);font-weight:800;border-radius:8px;padding:2px 10px}
+.g{font-weight:700;border-bottom:2px dotted var(--ac);cursor:help;background:none;border-top:0;border-left:0;border-right:0;padding:0}
+#tip{margin-top:10px;padding:10px 14px;border-left:4px solid var(--ac2);background:var(--acs);border-radius:8px;display:none}
+/* timeline */
+.tl{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px}
+.tl .rail{position:relative;height:56px}
+.tl .rail:before{content:"";position:absolute;left:0;right:0;top:26px;height:4px;background:var(--ln);border-radius:4px}
+.dot{position:absolute;top:14px;width:28px;height:28px;margin-left:-14px;border-radius:50%;border:4px solid var(--ac);background:var(--sf);padding:0}
+.dot[aria-pressed=true]{background:var(--ac);transform:scale(1.25)}
+.dot.seen{border-color:var(--ac2)}
+.pop{display:flex;gap:16px;align-items:center;background:var(--acs);border-radius:12px;padding:14px}
+.pop .big{font-size:3.2rem}
+.pop b{font-size:1.2rem}
+/* map */
+.mapw{display:grid;grid-template-columns:minmax(170px,260px) 1fr;gap:16px;align-items:start}
+.reg{display:block;width:100%;text-align:left;border:2px solid var(--ln);background:var(--sf);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-weight:700;min-height:44px}
+.reg:hover,.reg.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.info{min-height:150px}
+@media(max-width:640px){.mapw{grid-template-columns:1fr}}
+/* compare */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cmp div{border-radius:14px;padding:14px}
+.cmp .a{background:#fdebd0;color:#3d2a08}.cmp .b{background:#d6ecf7;color:#0b2f45}
+.cmp b{font-size:1.05rem}
+@media(max-width:520px){.cmp{grid-template-columns:1fr}}
+/* flashcard */
+.fc{perspective:900px;height:190px;cursor:pointer;width:100%;background:none;border:0;padding:0}
+.fc .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.fc.f .in{transform:rotateY(180deg)}
+.fc .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;padding:18px;font-weight:700}
+.fc .fr{background:var(--sf);border:2px solid var(--ac)}
+.fc .bk{background:var(--ac);color:#fff;transform:rotateY(180deg)}
+.nav{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px}
+.nav button,.btn{border:2px solid var(--ac);background:var(--sf);border-radius:10px;padding:8px 18px;font-weight:700;min-height:44px}
+.btn.p{background:var(--ac);color:#fff}
+/* quiz */
+.qa{display:flex;gap:10px;margin:12px 0}
+.qa button{flex:1;border:2px solid var(--ln);background:var(--sf);border-radius:12px;padding:12px;font-weight:700}
+.qa button.ok{background:var(--ok);border-color:var(--ok);color:#fff}
+.qa button.no{background:var(--no);border-color:var(--no);color:#fff}
+.fb{min-height:48px}
+.badges{display:flex;gap:12px;flex-wrap:wrap}
+.bd{flex:1 1 140px;text-align:center;padding:14px 8px;border-radius:14px;border:2px dashed var(--ln);color:var(--mu)}
+.bd.on{border:2px solid var(--ac2);background:var(--acs);color:var(--tx)}
+.bd .big{filter:grayscale(1);opacity:.5}.bd.on .big{filter:none;opacity:1}
+footer{padding:30px 0 40px;color:var(--mu);text-align:center;font-size:.9rem}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="in">
+<h1 id="logo">Sử Địa - THCS</h1>
+<div class="seg" id="sub" role="group" aria-label="Môn học"></div>
+<div class="seg" id="gr" role="group" aria-label="Lớp"></div>
+<div class="prog"><div class="pl" id="pl"></div><div class="bar"><i id="pb"></i></div></div>
+</div></header>
+<main>
+<section class="hero"><h2 id="ht"></h2><p class="sub" id="hs"></p></section>
+
+<section class="sec"><h2>Thẻ kiến thức 3 phút</h2><p class="sub">1 khái niệm = 1 từ khóa + 1 hình ảnh + 1 ví dụ. Bấm từ gạch chân để xem giải nghĩa.</p><div class="cards" id="kn"></div><div id="tip" role="status"></div></section>
+
+<section class="sec" id="s-h1"><h2>Trục thời gian tương tác</h2><p class="sub">Bấm vào từng mốc để xem sự kiện.</p><div class="tl"><div class="rail" id="rail"></div><div class="pop" id="pop"></div></div></section>
+
+<section class="sec" id="s-h2"><h2>Hồ sơ nhân vật</h2><p class="sub">Gặp gỡ những người đã làm nên lịch sử.</p><div class="cards" id="pf"></div></section>
+
+<section class="sec" id="s-g1"><h2>Bản đồ các vùng kinh tế Việt Nam</h2><p class="sub">Rê chuột hoặc bấm vào một vùng. Sơ đồ chỉ mang tính minh họa, đi từ Bắc xuống Nam.</p><div class="mapw"><div id="regs"></div><div class="card info" id="ri"></div></div></section>
+
+<section class="sec" id="s-g2"><h2>So sánh song song</h2><p class="sub">Hai kiểu khí hậu, nhìn là thấy khác nhau.</p><div class="cmp"><div class="a"><b>☀️ Nhiệt đới gió mùa</b><p>🌡️ Nhiệt độ: nóng quanh năm, trên 20°C<br>🌧️ Mưa: nhiều, tập trung vào mùa hè<br>🌿 Cảnh quan: rừng rậm, lúa nước</p></div><div class="b"><b>🍂 Ôn đới</b><p>🌡️ Nhiệt độ: 4 mùa rõ rệt, mùa đông lạnh<br>🌧️ Mưa: vừa phải, rải đều trong năm<br>🌲 Cảnh quan: rừng lá kim, lá rộng</p></div></div></section>
+
+<section class="sec"><h2>Flashcard ôn nhanh</h2><p class="sub">Đọc câu hỏi, nghĩ đáp án rồi bấm để lật thẻ.</p><button class="fc" id="fc" aria-label="Lật thẻ"><div class="in"><div class="face fr" id="fq"></div><div class="face bk" id="fa"></div></div></button><div class="nav"><button id="fp">Thẻ trước</button><span id="fn"></span><button id="fx">Thẻ sau</button></div></section>
+
+<section class="sec"><h2>Trắc nghiệm đúng hay sai</h2><p class="sub">Mỗi bài chỉ vài câu. Chọn nhanh, đọc giải thích.</p><div class="card"><div id="qn" class="pl"></div><p id="qt" style="font-weight:700;font-size:1.1rem;margin:6px 0"></p><div class="qa"><button data-v="1">Đúng</button><button data-v="0">Sai</button></div><div class="fb" id="fb"></div><button class="btn p" id="qnx" hidden>Câu tiếp theo</button></div></section>
+
+<section class="sec"><h2>Huy hiệu của em</h2><p class="sub">Hoàn thành 100% thanh tiến trình của một lớp để nhận huy hiệu.</p><div class="badges" id="bds"></div></section>
+</main>
+<footer>Sử Địa - THCS – nội dung minh họa theo chương trình THCS, em hãy đối chiếu với sách giáo khoa nhé.</footer>
+<script>
+const SUB={h:{n:"Lịch sử",hs:"Học lịch sử như đọc một câu chuyện",ht:"Mỗi mốc thời gian là một chương truyện",b:["Nhà sử học nhí","📜"]},g:{n:"Địa lý",hs:"Khám phá Trái Đất và đất nước mình",ht:"Cả thế giới nằm gọn trong lòng bàn tay",b:["Nhà thám hiểm","🧭"]}};
+const D={
+h:{
+6:{kn:{k:"Văn Lang",i:"🏺",c:"Nhà nước đầu tiên của người Việt, đứng đầu là vua Hùng, kinh đô ở Phong Châu.",e:"Giỗ Tổ Hùng Vương mỗi năm nhắc ta nhớ cội nguồn. Cư dân sống bằng [[nông nghiệp|Trồng trọt, chủ yếu là lúa nước]]."},
+tl:[["-700","Nhà nước Văn Lang","⛰️","Vua Hùng dựng nước đầu tiên của người Việt."],["40","Khởi nghĩa Hai Bà Trưng","⚔️","Trưng Trắc, Trưng Nhị đánh đuổi quân Hán, giành lại quyền tự chủ."],["938","Chiến thắng Bạch Đằng","🌊","Ngô Quyền đóng cọc nhọn trên sông, đánh tan quân Nam Hán."]],
+fc:[["Nhà nước đầu tiên của người Việt tên là gì?","Văn Lang"],["Ai chiến thắng quân Nam Hán trên sông Bạch Đằng năm 938?","Ngô Quyền"]],
+qz:[["Hai Bà Trưng khởi nghĩa vào năm 40.",1,"Đúng. Cuộc khởi nghĩa nổ ra năm 40 chống ách đô hộ nhà Hán."],["Vua Hùng đóng đô ở Thăng Long.",0,"Sai. Kinh đô thời Hùng Vương là Phong Châu."]]},
+7:{kn:{k:"Dời đô",i:"🏯",c:"Năm 1010 vua Lý Thái Tổ dời đô từ Hoa Lư về Đại La, đổi tên là Thăng Long.",e:"Thăng Long ngày nay là Hà Nội. Vùng đất này có [[đồng bằng|Vùng đất thấp, bằng phẳng, thuận lợi làm nông nghiệp và buôn bán]] rộng lớn."},
+tl:[["1010","Lý Thái Tổ dời đô","🏯","Kinh đô chuyển về Thăng Long, mở ra thời kỳ phát triển mới."],["1075","Lý Thường Kiệt đánh Tống","🛡️","Chủ động tiến công để phòng thủ, sau đó lập phòng tuyến sông Như Nguyệt."],["1288","Bạch Đằng lần ba","⚓","Trần Hưng Đạo đánh tan quân Nguyên Mông, kết thúc kháng chiến lần ba."]],
+fc:[["Ai ba lần đại phá quân Nguyên Mông?","Trần Hưng Đạo cùng quân dân nhà Trần"],["Năm 1010 kinh đô dời về đâu?","Thăng Long (Đại La)"]],
+qz:[["Nhà Lý dời đô về Thăng Long năm 1010.",1,"Đúng. Lý Thái Tổ ban Chiếu dời đô năm 1010."],["Trận Bạch Đằng 1288 do Lê Lợi chỉ huy.",0,"Sai. Chỉ huy là Trần Hưng Đạo."]]},
+8:{kn:{k:"Cần Vương",i:"🔥",c:"Phong trào do vua Hàm Nghi kêu gọi (1885) để giúp vua cứu nước, chống thực dân Pháp.",e:"Văn thân, sĩ phu và nông dân cùng nổi dậy. Đó là lúc chế độ [[phong kiến|Chế độ nhà vua và quan lại cai trị đất nước]] đứng trước thử thách lớn."},
+tl:[["1858","Pháp nổ súng ở Đà Nẵng","🚢","Thực dân Pháp bắt đầu xâm lược Việt Nam."],["1885","Phong trào Cần Vương","🔥","Vua Hàm Nghi ra chiếu kêu gọi toàn dân đứng lên."],["1911","Nguyễn Tất Thành ra đi tìm đường cứu nước","🌍","Người rời bến Nhà Rồng, mở ra con đường mới cho dân tộc."]],
+fc:[["Pháp nổ súng xâm lược nước ta năm nào?","Năm 1858 tại Đà Nẵng"],["Ai ra chiếu Cần Vương?","Vua Hàm Nghi"]],
+qz:[["Phong trào Cần Vương nổ ra năm 1885.",1,"Đúng. Sau khi kinh thành Huế thất thủ."],["Pháp tấn công Đà Nẵng năm 1945.",0,"Sai. Sự kiện là năm 1858."]]},
+9:{kn:{k:"Cách mạng tháng Tám",i:"🚩",c:"Năm 1945 nhân dân cả nước đứng lên giành chính quyền. Ngày 2/9/1945 Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập.",e:"Quảng trường Ba Đình (Hà Nội) là nơi diễn ra lễ độc lập. Nước ta khi đó mang tên Việt Nam Dân chủ Cộng hòa; [[bang giao|Quan hệ ngoại giao giữa các nước]] còn rất khó khăn."},
+tl:[["1945","Cách mạng tháng Tám","🚩","Giành chính quyền, thành lập nước Việt Nam Dân chủ Cộng hòa."],["1954","Chiến thắng Điện Biên Phủ","🏔️","Kết thúc kháng chiến chống Pháp, chấn động địa cầu."],["1975","Thống nhất đất nước","🕊️","Chiến dịch Hồ Chí Minh toàn thắng ngày 30/4."]],
+fc:[["Tuyên ngôn Độc lập đọc ngày nào?","2/9/1945"],["Chiến thắng nào kết thúc kháng chiến chống Pháp?","Điện Biên Phủ 1954"]],
+qz:[["Chiến dịch Hồ Chí Minh toàn thắng năm 1975.",1,"Đúng. Đất nước thống nhất."],["Điện Biên Phủ diễn ra năm 1965.",0,"Sai. Năm 1954."]]}},
+g:{
+6:{kn:{k:"Ngày và đêm",i:"🌗",c:"Trái Đất tự quay quanh trục một vòng mất khoảng 24 giờ nên nơi nào cũng lần lượt có ngày và đêm.",e:"Khi ở Việt Nam là ban ngày thì bên kia Trái Đất là ban đêm. Điều này gây ra [[chênh lệch giờ|Mỗi nơi trên Trái Đất có giờ khác nhau]]."},
+fc:[["Trái Đất quay quanh trục một vòng mất bao lâu?","Khoảng 24 giờ"],["Trái Đất có mấy lớp chính?","3 lớp: vỏ, lớp trung gian, lõi"]],
+qz:[["Hiện tượng ngày đêm do Trái Đất tự quay.",1,"Đúng. Trái Đất tự quay quanh trục."],["Lõi là lớp ngoài cùng của Trái Đất.",0,"Sai. Lớp ngoài cùng là lớp vỏ."]],tl:[]},
+7:{kn:{k:"Khí hậu",i:"🌦️",c:"Khí hậu là thời tiết lặp lại nhiều năm ở một nơi. Mỗi châu lục có nhiều đới khí hậu khác nhau.",e:"Việt Nam nằm trong vùng khí hậu nhiệt đới gió mùa, có [[phù sa|Đất màu mỡ do sông bồi đắp]] ở các đồng bằng."},
+fc:[["Sông dài nhất thế giới là sông nào?","Sông Nin (châu Phi) theo cách tính phổ biến"],["Châu lục lớn nhất thế giới?","Châu Á"]],
+qz:[["Châu Á là châu lục lớn nhất.",1,"Đúng. Châu Á có diện tích lớn nhất."],["Khí hậu là thời tiết của một ngày.",0,"Sai. Đó là thời tiết; khí hậu lặp lại nhiều năm."]],tl:[]},
+8:{kn:{k:"Địa hình",i:"⛰️",c:"Địa hình do [[nội lực|Lực sinh ra từ bên trong Trái Đất, như núi lửa, động đất]] và [[ngoại lực|Lực bên ngoài như gió, nước, nhiệt độ]] tạo ra.",e:"Núi lửa phun trào là tác động của nội lực, còn sông cuốn đất đá tạo đồng bằng là tác động của ngoại lực."},
+fc:[["Nội lực hay ngoại lực gây ra động đất?","Nội lực"],["Đồi núi chiếm khoảng bao nhiêu diện tích Việt Nam?","Khoảng 3/4"]],
+qz:[["Gió và nước là ngoại lực.",1,"Đúng. Chúng tác động từ bên ngoài."],["Núi lửa do ngoại lực tạo ra.",0,"Sai. Núi lửa là nội lực."]],tl:[]},
+9:{kn:{k:"Vùng kinh tế",i:"🗺️",c:"Việt Nam chia thành 7 vùng kinh tế, mỗi vùng có thế mạnh riêng về đất đai, khí hậu và tài nguyên.",e:"Tây Nguyên trồng cà phê, Quảng Ninh khai thác than, Đồng bằng sông Cửu Long trồng lúa. Cả nước cùng [[liên kết vùng|Các vùng hỗ trợ nhau phát triển]]."},
+fc:[["Tây Nguyên nổi tiếng với cây gì?","Cây cà phê"],["Vùng trồng lúa lớn nhất cả nước?","Đồng bằng sông Cửu Long"]],
+qz:[["Quảng Ninh nổi tiếng về khai thác than.",1,"Đúng. Đây là thế mạnh nổi bật."],["Cà phê là cây trồng chính của vùng Đông Bắc.",0,"Sai. Cà phê chủ yếu ở Tây Nguyên."]],tl:[]}}};
+const PF=[["Trần Hưng Đạo","🛡️","Hưng Đạo Vương","“Nếu bệ hạ muốn hàng, xin hãy chém đầu thần trước đã.”","Ba lần đại phá quân Nguyên Mông"],["Hai Bà Trưng","🐘","Nữ anh hùng","Cưỡi voi ra trận","Giành lại độc lập năm 40"],["Ngô Quyền","⚓","Tiền Ngô Vương","Dùng cọc nhọn cắm dưới lòng sông","Chiến thắng Bạch Đằng 938"],["Hồ Chí Minh","🚩","Chủ tịch nước","“Không có gì quý hơn độc lập, tự do.”","Đọc Tuyên ngôn Độc lập 1945"]];
+const RG=[["Trung du và miền núi Bắc Bộ","⛏️","Khoáng sản (than ở Quảng Ninh), thủy điện, ruộng bậc thang."],["Đồng bằng sông Hồng","🌾","Vựa lúa miền Bắc, Hà Nội là trung tâm chính trị."],["Bắc Trung Bộ","🌊","Dải đất hẹp, nhiều thiên tai, có rừng và biển."],["Duyên hải Nam Trung Bộ","🏖️","Nhiều cảng biển, du lịch biển, nghề cá."],["Tây Nguyên","☕","Cà phê, hồ tiêu, cao su trên đất đỏ bazan."],["Đông Nam Bộ","🏭","Vùng kinh tế năng động nhất, TP. Hồ Chí Minh."],["Đồng bằng sông Cửu Long","🍚","Vựa lúa, trái cây và thủy sản của cả nước."]];
+const $=id=>document.getElementById(id);
+let st={s:"h",g:6,fi:0,qi:0,a:false},pr={};
+try{pr=JSON.parse(localStorage.getItem("sd")||"{}")}catch(e){}
+const key=()=>st.s+st.g;
+const seen=()=>pr[key()]=pr[key()]||[];
+const total=()=>{const d=D[st.s][st.g];return (st.s=="h"?d.tl.length:RG.length)+d.fc.length+d.qz.length};
+function mark(id){const a=seen();if(!a.includes(id)){a.push(id);try{localStorage.setItem("sd",JSON.stringify(pr))}catch(e){}}upd()}
+function upd(){const t=total(),n=Math.min(seen().length,t),p=Math.round(n*100/t);$("pb").style.width=p+"%";$("pl").textContent="Lớp "+st.g+" – "+SUB[st.s].n+": "+p+"% ("+n+"/"+t+")";
+$("bds").innerHTML=["h","g"].flatMap(s=>[6,7,8,9].map(g=>{const d=D[s][g],t=(s=="h"?d.tl.length:RG.length)+d.fc.length+d.qz.length,on=(pr[s+g]||[]).length>=t;return `<div class="bd ${on?"on":""}"><div class="big">${SUB[s].b[1]}</div><b>${SUB[s].b[0]}</b><div class="pl">Lớp ${g}</div></div>`})).join("")}
+function gl(t){return t.replace(/\[\[(.+?)\|(.+?)\]\]/g,(m,a,b)=>`<button class="g" data-t="${b}">${a}</button>`)}
+function render(){
+const d=D[st.s][st.g],h=st.s=="h";document.documentElement.dataset.s=st.s;
+$("sub").innerHTML=Object.keys(SUB).map(k=>`<button data-s="${k}" aria-pressed="${k==st.s}">${SUB[k].n}</button>`).join("");
+$("gr").innerHTML=[6,7,8,9].map(g=>`<button data-g="${g}" aria-pressed="${g==st.g}">Lớp ${g}</button>`).join("");
+$("ht").textContent=SUB[st.s].ht;$("hs").textContent=SUB[st.s].hs+" – lớp "+st.g;
+["s-h1","s-h2"].forEach(i=>$(i).hidden=!h);["s-g1","s-g2"].forEach(i=>$(i).hidden=h);
+$("tip").style.display="none";
+const k=d.kn;$("kn").innerHTML=`<div class="card"><div class="big">${k.i}</div><h3>Từ khóa</h3><span class="kw">${k.k}</span></div><div class="card"><h3>Hình ảnh và nội dung</h3><p>${k.c}</p></div><div class="card"><h3>Ví dụ thực tế</h3><p>${gl(k.e)}</p></div>`;
+if(h){const n=d.tl.length;$("rail").innerHTML=d.tl.map((e,i)=>`<button class="dot ${seen().includes("t"+i)?"seen":""}" style="left:${10+i*80/(n-1)}%" data-i="${i}" aria-label="Năm ${e[0]}" aria-pressed="false"></button>`).join("");tl(0,true);
+$("pf").innerHTML=PF.map(p=>`<div class="card"><div class="big">${p[1]}</div><h3>${p[0]}</h3><p class="pl">${p[2]}</p><p><b>Câu nói và nét nổi bật:</b> ${p[3]}</p><p><span class="kw">${p[4]}</span></p></div>`).join("")}
+else{$("regs").innerHTML=RG.map((r,i)=>`<button class="reg" data-r="${i}">${r[1]} ${r[0]}</button>`).join("");$("ri").innerHTML="<p>Chọn một vùng ở bên trái để xem đặc điểm nổi bật.</p>"}
+st.fi=0;st.qi=0;fcr();qr();upd()}
+function tl(i,quiet){const e=D.h[st.g].tl[i];document.querySelectorAll(".dot").forEach((b,j)=>b.setAttribute("aria-pressed",j==i));$("pop").innerHTML=`<div class="big">${e[2]}</div><div><b>Năm ${e[0].replace("-","")}${e[0][0]=="-"?" TCN":""}: ${e[1]}</b><br>${e[3]}</div>`;if(!quiet)mark("t"+i)}
+function fcr(){const f=D[st.s][st.g].fc,c=f[st.fi];$("fc").classList.remove("f");$("fq").textContent=c[0];$("fa").textContent=c[1];$("fn").textContent=(st.fi+1)+"/"+f.length}
+function qr(){const q=D[st.s][st.g].qz,c=q[st.qi];st.a=false;$("qn").textContent="Câu "+(st.qi+1)+"/"+q.length;$("qt").textContent=c[0];$("fb").textContent="";$("qnx").hidden=true;document.querySelectorAll(".qa button").forEach(b=>b.className="")}
+document.addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
+if(t.dataset.s){st.s=t.dataset.s;render()}
+else if(t.dataset.g){st.g=+t.dataset.g;render()}
+else if(t.dataset.i!==undefined)tl(+t.dataset.i);
+else if(t.dataset.r!==undefined)reg(+t.dataset.r);
+else if(t.classList.contains("g")){$("tip").textContent=t.textContent+": "+t.dataset.t;$("tip").style.display="block"}
+else if(t.id=="fc"){t.classList.toggle("f");if(t.classList.contains("f"))mark("f"+st.fi)}
+else if(t.id=="fp"||t.id=="fx"){const n=D[st.s][st.g].fc.length;st.fi=(st.fi+(t.id=="fx"?1:n-1))%n;fcr()}
+else if(t.dataset.v!==undefined&&!st.a){st.a=true;const c=D[st.s][st.g].qz[st.qi],ok=(+t.dataset.v)==c[1];t.className=ok?"ok":"no";$("fb").textContent=(ok?"Chính xác! ":"Chưa đúng. ")+c[2];$("qnx").hidden=false;mark("q"+st.qi)}
+else if(t.id=="qnx"){st.qi=(st.qi+1)%D[st.s][st.g].qz.length;qr()}});
+document.addEventListener("mouseover",e=>{const t=e.target.closest(".reg");if(t)reg(+t.dataset.r,true)});
+function reg(i,q){document.querySelectorAll(".reg").forEach((b,j)=>b.classList.toggle("on",j==i));const r=RG[i];$("ri").innerHTML=`<div class="big">${r[1]}</div><h3>${r[0]}</h3><p>${r[2]}</p>`;if(!q)mark("r"+i)}
+render();
+</script>
+</body>
+</html>
