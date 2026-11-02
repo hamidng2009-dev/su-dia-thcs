@@ -90,6 +90,7 @@ input{font:inherit;width:100%;padding:10px;margin:6px 0;border:2px solid var(--l
 #msg{min-height:24px;color:var(--no);font-size:.9rem}
 select{font:inherit;padding:10px;border:2px solid var(--ln);border-radius:8px;background:var(--sf);color:var(--tx);max-width:100%;margin-left:6px}
 .rgp{fill:var(--rc);stroke:var(--bg);stroke-width:2;cursor:pointer;transition:filter .2s}.rgp:hover{filter:brightness(1.12)}.rgp.on{stroke:var(--tx);stroke-width:3.5}#vm svg text{font-family:inherit}
+#ec{width:100%;height:auto;display:block;background:var(--bg);border-radius:12px;margin-top:12px}#eq{display:none;gap:8px;flex-wrap:wrap;margin-top:10px}#eq button{border:2px solid var(--ac);background:var(--sf);border-radius:10px;padding:6px 14px;font-weight:700;min-height:44px}#es{padding:0;border:0;background:none}
 </style>
 </head>
 <body>
@@ -112,6 +113,8 @@ select{font:inherit;padding:10px;border:2px solid var(--ln);border-radius:8px;ba
 <section class="sec" id="s-g1"><h2>Bản đồ các vùng kinh tế Việt Nam</h2><p class="sub">Rê chuột hoặc bấm vào một vùng trên bản đồ hoặc trong danh sách. Số 1 đến 7 là bảy vùng kinh tế.</p><div class="mapw"><div id="vm"></div><div><div id="regs"></div><div class="card info" id="ri"></div></div></div></section>
 
 <section class="sec" id="s-g2"><h2>So sánh song song</h2><p class="sub">Hai kiểu khí hậu, nhìn là thấy khác nhau.</p><div class="cmp"><div class="a"><b>☀️ Nhiệt đới gió mùa</b><p>🌡️ Nhiệt độ: nóng quanh năm, trên 20°C<br>🌧️ Mưa: nhiều, tập trung vào mùa hè<br>🌿 Cảnh quan: rừng rậm, lúa nước</p></div><div class="b"><b>🍂 Ôn đới</b><p>🌡️ Nhiệt độ: 4 mùa rõ rệt, mùa đông lạnh<br>🌧️ Mưa: vừa phải, rải đều trong năm<br>🌲 Cảnh quan: rừng lá kim, lá rộng</p></div></div></section>
+
+<section class="sec" id="s-g3" hidden><h2>Mô hình Trái Đất</h2><p class="sub">Bấm Chạy hoặc kéo thanh trượt để xem Trái Đất chuyển động.</p><div class="card"><div class="seg" id="em" role="group" aria-label="Chọn mô hình"><button data-m="0" aria-pressed="true">Ngày và đêm</button><button data-m="1" aria-pressed="false">Bốn mùa</button></div><canvas id="ec" width="960" height="520" role="img" aria-label="Mô hình Trái Đất chuyển động"></canvas><p id="ei" style="margin:10px 0 0;font-weight:700"></p><div class="nav" style="justify-content:flex-start"><button id="ep">Chạy</button></div><div id="eq"><button data-d="80">Xuân phân</button><button data-d="172">Hạ chí</button><button data-d="266">Thu phân</button><button data-d="356">Đông chí</button></div><label for="es" class="pl" id="el">Giờ trong ngày (0 - 24)</label><input id="es" type="range" min="0" max="24" step="0.25" value="12"></div></section>
 
 <section class="sec"><h2>Flashcard ôn nhanh</h2><p class="sub">Đọc câu hỏi, nghĩ đáp án rồi bấm để lật thẻ.</p><button class="fc" id="fc" aria-label="Lật thẻ"><div class="in"><div class="face fr" id="fq"></div><div class="face bk" id="fa"></div></div></button><div class="nav"><button id="fp">Thẻ trước</button><span id="fn"></span><button id="fx">Thẻ sau</button></div></section>
 
@@ -203,6 +206,54 @@ sb.auth.onAuthStateChange((_e,ss)=>{setUser(ss?ss.user:null)});
 }
 const msg=t=>$("msg").textContent=t;
 document.addEventListener("click",e=>{const p=e.target.closest(".rgp");if(p)reg(+p.dataset.r)});
+const E={m:0,h:12,d:80,run:false,last:0};
+const pad=n=>String(n).padStart(2,"0"),SN=["xuân","hạ","thu","đông"];
+const seas=d=>d>=80&&d<172?0:d>=172&&d<266?1:d>=266&&d<356?2:3;
+function drawE(){
+const c=$("ec"),g=c.getContext("2d"),W=c.width,H=c.height,cs=getComputedStyle(document.documentElement),tx=cs.getPropertyValue("--tx").trim()||"#222",mu=cs.getPropertyValue("--mu").trim()||"#666",ac=cs.getPropertyValue("--ac").trim()||"#c00";
+g.clearRect(0,0,W,H);g.textAlign="center";
+const sun=(x,y,r)=>{g.strokeStyle="#e6b84f";g.lineWidth=3;for(let i=0;i<12;i++){const a=i*Math.PI/6;g.beginPath();g.moveTo(x+Math.cos(a)*(r+6),y+Math.sin(a)*(r+6));g.lineTo(x+Math.cos(a)*(r+20),y+Math.sin(a)*(r+20));g.stroke()}g.fillStyle="#f5c542";g.beginPath();g.arc(x,y,r,0,7);g.fill()};
+if(E.m==0){
+const cx=640,cy=270,R=160;
+sun(120,cy,60);g.strokeStyle="#e6b84f";g.lineWidth=3;
+for(let y=cy-120;y<=cy+120;y+=60){g.beginPath();g.moveTo(220,y);g.lineTo(420,y);g.moveTo(420,y);g.lineTo(408,y-7);g.moveTo(420,y);g.lineTo(408,y+7);g.stroke()}
+g.fillStyle="#4f9bd9";g.beginPath();g.arc(cx,cy,R,0,7);g.fill();
+g.strokeStyle="rgba(255,255,255,.45)";g.lineWidth=1;
+[.33,.66,1].forEach(k=>{g.beginPath();g.arc(cx,cy,R*k,0,7);g.stroke()});
+for(let i=0;i<12;i++){const a=i*Math.PI/6;g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));g.stroke()}
+g.fillStyle="rgba(8,14,40,.6)";g.beginPath();g.arc(cx,cy,R,-Math.PI/2,Math.PI/2);g.closePath();g.fill();
+const th=(180+(E.h-12)*15)*Math.PI/180,pt=a=>[cx+R*.8*Math.cos(a),cy-R*.8*Math.sin(a)];
+const [x1,y1]=pt(th),[x2,y2]=pt(th+Math.PI);
+g.lineWidth=4;g.fillStyle="#fff";g.strokeStyle=mu;g.beginPath();g.arc(x2,y2,12,0,7);g.fill();g.stroke();
+g.strokeStyle=ac;g.beginPath();g.arc(x1,y1,14,0,7);g.fill();g.stroke();
+g.fillStyle="#222";g.font="bold 12px sans-serif";g.fillText("VN",x1,y1+4);
+g.fillStyle="#fff";g.beginPath();g.arc(cx,cy,4,0,7);g.fill();g.font="12px sans-serif";g.fillText("Cực Bắc",cx,cy-10);
+g.fillStyle=tx;g.font="bold 15px sans-serif";g.fillText("Ban ngày",cx-R*.5,cy+R+34);g.fillText("Ban đêm",cx+R*.5,cy+R+34);
+g.fillStyle=mu;g.font="15px sans-serif";g.fillText("Ánh sáng Mặt Trời",320,cy-142);g.fillText("Trái Đất tự quay từ Tây sang Đông (nhìn từ phía trên cực Bắc)",W/2,36);
+const hh=Math.floor(E.h),mm=Math.round((E.h-hh)*60),H2=mm==60?(hh+1)%24:hh,M2=mm==60?0:mm,day=Math.cos(th)<-1e-9;
+$("ei").innerHTML="Giờ ở Việt Nam: "+pad(H2)+":"+pad(M2)+". Nơi em ở đang là <b>"+(day?"ban ngày":"ban đêm")+"</b>, còn phía bên kia Trái Đất là "+(day?"ban đêm":"ban ngày")+".";
+}else{
+const cx=480,cy=275,rx=330,ry=120,ph=(90+(E.d-80)/365*360)*Math.PI/180,ex=cx+rx*Math.cos(ph),ey=cy-ry*Math.sin(ph);
+g.setLineDash([8,8]);g.strokeStyle=mu;g.lineWidth=1.5;g.beginPath();g.ellipse(cx,cy,rx,ry,0,0,7);g.stroke();g.setLineDash([]);
+g.fillStyle=mu;g.font="14px sans-serif";
+[["Hạ chí (21/6)",cx-rx,cy,0,58],["Đông chí (22/12)",cx+rx,cy,0,58],["Xuân phân (21/3)",cx,cy-ry,0,-14],["Thu phân (23/9)",cx,cy+ry,0,34]].forEach(k=>{g.beginPath();g.arc(k[1],k[2],4,0,7);g.fill();g.fillText(k[0],k[1],k[2]+k[4])});
+const earth=()=>{g.fillStyle="#4f9bd9";g.beginPath();g.arc(ex,ey,28,0,7);g.fill();g.save();g.translate(ex,ey);g.rotate(Math.atan2(ey-cy,ex-cx));g.fillStyle="rgba(8,14,40,.62)";g.beginPath();g.arc(0,0,28,-Math.PI/2,Math.PI/2);g.closePath();g.fill();g.restore();
+const t=23.4*Math.PI/180,sx=Math.sin(t)*46,sy=Math.cos(t)*46;g.strokeStyle=tx;g.lineWidth=2;g.beginPath();g.moveTo(ex-sx,ey+sy);g.lineTo(ex+sx,ey-sy);g.stroke();g.fillStyle=tx;g.font="bold 13px sans-serif";g.fillText("B",ex+sx*1.2,ey-sy*1.2-2)};
+if(Math.sin(ph)>0){earth();sun(cx,cy,38)}else{sun(cx,cy,38);earth()}
+g.fillStyle=mu;g.font="15px sans-serif";g.fillText("Trục Trái Đất nghiêng và luôn hướng về một phía (B là cực Bắc)",W/2,36);
+const x=new Date(2021,0,Math.round(E.d)),s=seas(Math.round(E.d)),near=k=>Math.abs(E.d-k)<=4;
+let note=near(172)?" Bắc bán cầu nghiêng về phía Mặt Trời nên ngày dài, đêm ngắn.":near(356)?" Bắc bán cầu chếch xa Mặt Trời nên ngày ngắn, đêm dài.":(near(80)||near(266))?" Hai bán cầu nhận ánh sáng gần như nhau, ngày và đêm dài bằng nhau.":"";
+$("ei").innerHTML="Ngày "+x.getDate()+"/"+(x.getMonth()+1)+": Bắc bán cầu là mùa <b>"+SN[s]+"</b>, Nam bán cầu là mùa <b>"+SN[(s+2)%4]+"</b>."+note;
+}}
+function syncE(){$("es").value=E.m?E.d:E.h}
+function setMode(m){E.m=m;E.run=false;$("ep").textContent="Chạy";document.querySelectorAll("#em button").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.m==m));const r=$("es");r.min=m?1:0;r.max=m?365:24;r.step=m?1:.25;$("el").textContent=m?"Ngày trong năm":"Giờ trong ngày (0 - 24)";$("eq").style.display=m?"flex":"none";syncE();drawE()}
+function earthInit(no){setMode(no==8?1:0)}
+function tick(ts){if(!E.run)return;const dt=Math.min(.1,(ts-E.last)/1000||0);E.last=ts;if(E.m==0)E.h=(E.h+dt*2)%24;else E.d=((E.d-1+dt*40)%365)+1;syncE();drawE();requestAnimationFrame(tick)}
+$("es").addEventListener("input",e=>{const v=+e.target.value;if(E.m)E.d=v;else E.h=v;drawE()});
+document.addEventListener("click",e=>{const t=e.target.closest("#s-g3 button");if(!t)return;
+if(t.dataset.m!==undefined)setMode(+t.dataset.m);
+else if(t.dataset.d!==undefined){E.d=+t.dataset.d;syncE();drawE()}
+else if(t.id=="ep"){E.run=!E.run;t.textContent=E.run?"Dừng":"Chạy";if(E.run){E.last=performance.now();requestAnimationFrame(tick)}}});
 document.addEventListener("change",e=>{if(e.target.id=="ls"){st.l=+e.target.value;render()}});
 document.addEventListener("click",async e=>{const id=e.target.id;
 if(id=="li"){msg("");$("dl").showModal()}
@@ -219,7 +270,7 @@ pickD();const d=D[st.s][st.g],h=st.s=="h";document.documentElement.dataset.s=st.
 $("sub").innerHTML=Object.keys(SUB).map(k=>`<button data-s="${k}" aria-pressed="${k==st.s}">${SUB[k].n}</button>`).join("");
 $("gr").innerHTML=[6,7,8,9].map(g=>`<button data-g="${g}" aria-pressed="${g==st.g}">Lớp ${g}</button>`).join("");
 $("ht").textContent=SUB[st.s].ht;$("hs").textContent=SUB[st.s].hs+" – lớp "+st.g;
-$("s-h1").hidden=!h||!d.tl.length;$("s-h2").hidden=!h;$("s-g1").hidden=h||st.g!=9;$("s-g2").hidden=h||st.g>7;
+$("s-h1").hidden=!h||!d.tl.length;$("s-h2").hidden=!h;$("s-g1").hidden=h||st.g!=9;$("s-g2").hidden=h||st.g>7;{const _a=LS[st.s]&&LS[st.s][st.g],_n=_a&&_a[st.l]?_a[st.l].no:0;$("s-g3").hidden=h||st.g!=6||(_n!=7&&_n!=8);if(!$("s-g3").hidden)earthInit(_n)}
 {const a=LS[st.s]&&LS[st.s][st.g];let o="",c="";(a||[]).forEach((l,i)=>{if(l.ch!==c){if(c!==""||i)o+="</optgroup>";o+=`<optgroup label="${l.ch||"Khác"}">`;c=l.ch}o+=`<option value="${i}"${i==st.l?" selected":""}>${l.no?"Bài "+l.no+": ":""}${l.t}</option>`});$("pk").innerHTML=a&&a.length?`<label for="ls" class="pl">Chọn bài học</label><select id="ls">${o}</optgroup></select>`:""}
 $("tip").style.display="none";
 $("kn").innerHTML=(Array.isArray(d.kn)?d.kn:[d.kn]).map(k=>`<div class="card"><div class="big">${k.i}</div><h3>Từ khóa</h3><span class="kw">${k.k}</span></div><div class="card"><h3>Hình ảnh và nội dung</h3><p>${k.c}</p></div><div class="card"><h3>Ví dụ thực tế</h3><p>${gl(k.e)}</p></div>`).join("");
